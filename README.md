@@ -1,3 +1,5 @@
+Changes to AnimatedGIF to allow background color processing.
+
 AnimatedGIF
 ===========
 
