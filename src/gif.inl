@@ -298,7 +298,9 @@ static int GIFParseInfo(GIFIMAGE *pPage, int bInfoOnly)
         pPage->ucGIFBits = 0;
         iOffset = 13;
         if (p[10] & 0x80) // global color table?
-        { // by default, convert to byte-reversed RGB565 for immediate use
+        {
+            pPage->bHasGlobalPalette = true;
+            // by default, convert to byte-reversed RGB565 for immediate use
             // Read enough additional data for the color table
             iBytesRead += (*pPage->pfnRead)(&pPage->GIFFile, &pPage->ucFileBuf[iBytesRead], 3*(1<<iColorTableBits));
             if (pPage->ucPaletteType == GIF_PALETTE_RGB565_LE || pPage->ucPaletteType == GIF_PALETTE_RGB565_BE)
@@ -861,9 +863,9 @@ static void GIFMakePels(GIFIMAGE *pPage, unsigned int code)
             gd.iWidth = pPage->iWidth;
             gd.iHeight = pPage->iHeight;
             gd.pPixels = pPage->ucLineBuf;
+            gd.bHasGlobalPalette = pPage->bHasGlobalPalette;
+            gd.pGlobalPalette = pPage->bHasGlobalPalette ? pPage->pPalette : NULL;
             gd.pPalette = (pPage->bUseLocalPalette) ? pPage->pLocalPalette : pPage->pPalette;
-            gd.pPalette24 = (uint8_t *)gd.pPalette; // just cast the pointer for RGB888
-            gd.ucIsGlobalPalette = pPage->bUseLocalPalette==1?0:1;
             gd.y = pPage->iHeight - pPage->iYCount;
             // Ugly logic to handle the interlaced line position, but it
             // saves having to have another set of state variables

@@ -181,6 +181,7 @@ void AnimatedGIF::begin(unsigned char ucPaletteType)
     _gif.ucPaletteType = ucPaletteType;
     _gif.ucDrawType = GIF_DRAW_RAW; // assume RAW pixel handling
     _gif.pFrameBuffer = NULL;
+    _gif.bHasGlobalPalette = false;
 } /* begin() */
 //
 // Play a single frame

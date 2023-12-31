@@ -114,13 +114,13 @@ typedef struct gif_draw_tag
     int iWidth, iHeight; // size of this frame
     void *pUser; // user supplied pointer
     uint8_t *pPixels; // 8-bit source pixels for this line
-    uint16_t *pPalette; // little or big-endian RGB565 palette entries (default)
-    uint8_t *pPalette24; // RGB888 palette (optional)
+    unsigned short *pPalette; // little or big-endian RGB565 palette entries (default)
     uint8_t ucTransparent; // transparent color
     uint8_t ucHasTransparency; // flag indicating the transparent color is in use
     uint8_t ucDisposalMethod; // frame disposal method
     uint8_t ucBackground; // background color
-    uint8_t ucIsGlobalPalette; // Flag to indicate that a global palette, rather than a local palette is being used
+    bool bHasGlobalPalette;
+    unsigned short *pGlobalPalette;
 } GIFDRAW;
 
 // Callback function prototypes
@@ -167,6 +167,7 @@ typedef struct gif_image_tag
     unsigned char ucGIFBits, ucBackground, ucTransparent, ucCodeStart, ucMap, bUseLocalPalette;
     unsigned char ucPaletteType; // RGB565 or RGB888
     unsigned char ucDrawType; // RAW or COOKED
+    bool bHasGlobalPalette;
 } GIFIMAGE;
 
 #ifdef __cplusplus
