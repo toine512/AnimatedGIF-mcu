@@ -155,7 +155,7 @@ typedef struct gif_image_tag
     GIFFILE GIFFile;
     void *pUser;
     unsigned char *pFrameBuffer;
-    unsigned char *pPixels, *pOldPixels;
+    unsigned char *pPixels;
     unsigned char ucLineBuf[MAX_WIDTH]; // current line
     unsigned char ucFileBuf[FILE_BUF_SIZE]; // holds temp data and pixel stack
     unsigned short pPalette[(MAX_COLORS * 3)/2]; // can hold RGB565 or RGB888 - set in begin()
