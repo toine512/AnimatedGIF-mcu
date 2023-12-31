@@ -12,7 +12,7 @@
 
 #ifndef __ANIMATEDGIF__
 #define __ANIMATEDGIF__
-#if defined( PICO_BUILD ) || defined( __MACH__ ) || defined( __LINUX__ ) || defined( __MCUXPRESSO )
+#if defined( PICO_BUILD ) || defined( __MACH__ ) || defined( __LINUX__ ) || defined( __MCUXPRESSO ) || defined( ESP_PLATFORM )
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -27,7 +27,7 @@
 // Written by Larry Bank
 // Copyright (c) 2020 BitBank Software, Inc.
 // bitbank@pobox.com
-// 
+//
 // Designed to decode images up to 480x320
 // using less than 22K of RAM
 //

@@ -35,7 +35,7 @@ static int DecodeLZW(GIFIMAGE *pImage, int iOptions);
 static int32_t readMem(GIFFILE *pFile, uint8_t *pBuf, int32_t iLen);
 static int32_t seekMem(GIFFILE *pFile, int32_t iPosition);
 int GIF_getInfo(GIFIMAGE *pPage, GIFINFO *pInfo);
-#if defined( PICO_BUILD ) || defined( __LINUX__ ) || defined( __MCUXPRESSO )
+#if defined( PICO_BUILD ) || defined( __LINUX__ ) || defined( __MCUXPRESSO ) || defined( ESP_PLATFORM )
 static int32_t readFile(GIFFILE *pFile, uint8_t *pBuf, int32_t iLen);
 static int32_t seekFile(GIFFILE *pFile, int32_t iPosition);
 static void closeFile(void *handle);
@@ -54,7 +54,7 @@ int GIF_openRAM(GIFIMAGE *pGIF, uint8_t *pData, int iDataSize, GIF_DRAW_CALLBACK
     return GIFInit(pGIF);
 } /* GIF_openRAM() */
 
-#ifdef __LINUX__
+#if defined( __LINUX__ ) || defined( ESP_PLATFORM )
 int GIF_openFile(GIFIMAGE *pGIF, const char *szFilename, GIF_DRAW_CALLBACK *pfnDraw)
 {
     pGIF->iError = GIF_SUCCESS;
@@ -103,7 +103,7 @@ int rc;
     if (delayMilliseconds)
        *delayMilliseconds = 0; // clear any old valid
     if (pGIF->GIFFile.iPos >= pGIF->GIFFile.iSize-1) // no more data exists
-    {   
+    {
         (*pGIF->pfnSeek)(&pGIF->GIFFile, 0); // seek to start
     }
     if (GIFParseInfo(pGIF, 0))
@@ -198,7 +198,7 @@ static int32_t seekMem(GIFFILE *pFile, int32_t iPosition)
     return iPosition;
 } /* seekMem() */
 
-#if defined ( __LINUX__ ) || defined( __MCUXPRESSO )
+#if defined ( __LINUX__ ) || defined( __MCUXPRESSO ) || defined( ESP_PLATFORM )
 static void closeFile(void *handle)
 {
     fclose((FILE *)handle);
@@ -264,7 +264,7 @@ static int GIFParseInfo(GIFIMAGE *pPage, int bInfoOnly)
     int32_t iOffset = 0;
     int32_t iStartPos = pPage->GIFFile.iPos; // starting file position
     int iReadSize;
-    
+
     pPage->bUseLocalPalette = 0; // assume no local palette
     pPage->bEndOfFrame = 0; // we're just getting started
     pPage->iFrameDelay = 0; // may not have a gfx extension block
@@ -435,7 +435,7 @@ static int GIFParseInfo(GIFIMAGE *pPage, int bInfoOnly)
     pPage->iWidth = INTELSHORT(&p[iOffset+4]);
     pPage->iHeight = INTELSHORT(&p[iOffset+6]);
     iOffset += 8;
-    
+
     /* Image descriptor
      7 6 5 4 3 2 1 0    M=0 - use global color map, ignore pixel
      M I 0 0 0 pixel    M=1 - local color map follows, use pixel
@@ -448,7 +448,7 @@ static int GIFParseInfo(GIFIMAGE *pPage, int bInfoOnly)
     {// by default, convert to byte-reversed RGB565 for immediate use
         j = (1<<((pPage->ucMap & 7)+1));
         // Read enough additional data for the color table
-        iBytesRead += (*pPage->pfnRead)(&pPage->GIFFile, &pPage->ucFileBuf[iBytesRead], j*3);            
+        iBytesRead += (*pPage->pfnRead)(&pPage->GIFFile, &pPage->ucFileBuf[iBytesRead], j*3);
         if (pPage->ucPaletteType == GIF_PALETTE_RGB565_LE || pPage->ucPaletteType == GIF_PALETTE_RGB565_BE)
         {
             for (i=0; i<j; i++)
@@ -827,7 +827,7 @@ static void GIFMakePels(GIFIMAGE *pPage, unsigned int code)
         code = giftabs[code];
     }
     iPixCount = (int)(intptr_t)(pPage->ucFileBuf + FILE_BUF_SIZE - s);
-    
+
     while (iPixCount && pPage->iYCount > 0)
     {
         if (pPage->iXCount > iPixCount)  /* Pixels fit completely on the line */
