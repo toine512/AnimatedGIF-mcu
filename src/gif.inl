@@ -471,6 +471,12 @@ static int GIFParseInfo(GIFIMAGE *pPage, int bInfoOnly)
         }
         pPage->bUseLocalPalette = 1;
     }
+    else if (!pPage->bHasGlobalPalette) // No palette at all?
+    {
+        pPage->iError = GIF_BAD_FILE;
+        return 0;
+    }
+
     pPage->ucCodeStart = p[iOffset++]; /* initial code size */
     /* Since GIF can be 1-8 bpp, we only allow 1,4,8 */
     pPage->iBpp = cGIFBits[pPage->ucCodeStart];
